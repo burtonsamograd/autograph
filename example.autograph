@@ -1,4 +1,8 @@
 ;; -*- mode: lisp -*-
+
+;; Some of these style rules make little sense. It's more of a testbed
+;; for autograph features.
+
 (defvar width '2em)
 
 (defun color () 'black)
