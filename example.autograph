@@ -10,6 +10,7 @@
     (padding 0px)
     (margin 0px)
     (cursor pointer)))
+
 (*
  (font-family monospace)
  (font-weight bold)
@@ -25,7 +26,7 @@
  (padding 0px)
  (margin 0px))
 
-((@ *Two-character-hex-value-edit-view)
+((@ *Two-character-hex-value-edit-view) ;; @ is for classes 
  (max-width width)
  (display inline-block))
 
@@ -39,13 +40,13 @@
 ((@ *Icon-x before)
  (content "+"))
 
-((% *Some-id)
+((% *Some-id) ;; % is for id's
  (background-color red))
 
-((^ div input)
+((^ div input)  ;; ^ === insert spaces between
  (display inline-block))
  
-((^ (@ *Some-class) (% *Some-id)) ;; ^ === insert spaces between
+((^ (@ *Some-class) (% *Some-id))
  (display inline-block))
 
 ((& (@ *Some-class) (% *Some-id)) ;; & === insert commas between
