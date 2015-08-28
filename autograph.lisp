@@ -30,12 +30,6 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
                          (loop for c across identifier
                             do (acond ((eql c #\-)
                                        (setf lowercase (not lowercase)))
-                                      ((position c "!?#%+/=:<>^")
-                                       (write-sequence (aref #("bang" "what" "hash" "percent"
-                                                               "plus" "slash" "equals" "colon"
-                                                               "lessthan" "greaterthan" "caret")
-                                                             it)
-                                                       acc))
                                       (t (write-char (cond ((and lowercase
                                                                  (not all-uppercase)) 
                                                             (char-downcase c))
@@ -68,6 +62,9 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
           (format *error-output* "autograph: Cannot find load file: ~A~%" file))
       ))
 
+(defun string-lowercase (s)
+  (map 'string #'char-downcase s))
+
 (defmacro ^ (&rest things)
   (with-output-to-string (s)
     (dolist (thing things)
@@ -97,9 +94,6 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
      (when  thing
        (concatenate 'string ":"
                     (encode-js-identifier (symbol-name thing))))))
-
-(defun string-lowercase (s)
-  (map 'string #'char-downcase s))
 
 (defun expand-rules (rules)
   (flet ((format-rule-values (values)
@@ -140,7 +134,7 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
 (defun autograph (f)
   (do ((form (read f nil) (read f nil)))
       ((not form))
-    (format t "/* ~A */~%" form (car form))
+    (format t "/* ~S */~%" form (car form))
     (case (car form)
       ((defvar defun)
        (case (car form)

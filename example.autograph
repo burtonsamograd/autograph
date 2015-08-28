@@ -5,9 +5,9 @@
 
 (defvar width '2em)
 
+;; Functions act like macros and must return a symbol or a form
 (defun color () 'black)
 
-;; Functions act like macros and must return a form
 (defun edit (x)
   `(input
     (font-family monospace)
@@ -42,9 +42,6 @@
 ((@ *Edit-view hover) ;; -> .EditView:hover
  (border solid 1px red))
 
-((@ *Icon-x before)
- (content "+"))
-
 ((% *Some-id) ;; % is for id's
  (background-color red))
 
@@ -56,4 +53,7 @@
 
 ((& (@ *Some-class) (% *Some-id)) ;; & === insert commas between
  (display inline-block))
+
+((@ *Tiny-Button before)
+ (content "+"))
 
