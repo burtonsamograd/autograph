@@ -1,10 +1,15 @@
 Autograph
 ---------
 
-Autograph is a CSS generation langauge that uses s-expressions for
-declaring styling rules.
+Autograph is a CSS generation language that uses s-expressions for
+styling rules and allows for the use of variables, functions and
+macros written in Common Lisp.
+
+Obviously, this is work in progress.
 
 Example:
+--------
+
 (defvar width 2em)
 
 (css
@@ -30,3 +35,7 @@ Example:
   (:border solid 1px red))
  )
  
+
+--
+BUrton Samograd <burton.samograd@gmail.com>
+2015
