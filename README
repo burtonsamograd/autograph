@@ -13,6 +13,11 @@ Usage:
 
         autograph style.autograph > style.css
 
+License:
+--------
+
+MIT
+
 --
 Burton Samograd <burton.samograd@gmail.com>
 2015
