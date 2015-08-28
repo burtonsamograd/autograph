@@ -2,8 +2,8 @@ Autograph
 ---------
 
 Autograph is a CSS generation language that uses s-expressions for
-styling rules and allows for the use of variables, functions and
-macros written in Common Lisp.
+styling rules and allows for the use of variables and functions
+written in Common Lisp.
 
 See example.autograph for syntax.
 
