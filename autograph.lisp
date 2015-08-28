@@ -174,4 +174,4 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
                              (format *error-output* "~A~%" e)
                              (sb-ext:exit :code 1))))
                        (autograph f))))))))))
-      (format *error-output* "usage: autograph style.autograph > style.css~%")))
+      (format *error-output* "Usage: autograph style.autograph > style.css~%")))
