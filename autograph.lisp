@@ -10,7 +10,7 @@ following transformation heuristics case conversion. For example,
 paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
     (or (gethash identifier cache)
         (setf (gethash identifier cache)
-              (cond ((some (lambda (c) (find c "-*+!?#@%/=:<>^")) identifier)
+              (cond ((some (lambda (c) (find c "-+!?#%/=:<>^")) identifier)
                      (let ((lowercase t)
                            (all-uppercase nil))
                        (when (and (not (string= identifier "[]")) ;; HACK
@@ -30,9 +30,9 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
                          (loop for c across identifier
                             do (acond ((eql c #\-)
                                        (setf lowercase (not lowercase)))
-                                      ((position c "!?#@%+*/=:<>^")
-                                       (write-sequence (aref #("bang" "what" "hash" "at" "percent"
-                                                               "plus" "star" "slash" "equals" "colon"
+                                      ((position c "!?#%+/=:<>^")
+                                       (write-sequence (aref #("bang" "what" "hash" "percent"
+                                                               "plus" "slash" "equals" "colon"
                                                                "lessthan" "greaterthan" "caret")
                                                              it)
                                                        acc))
@@ -68,28 +68,75 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
           (format *error-output* "autograph: Cannot find load file: ~A~%" file))
       ))
 
-(defmacro @ (thing other-thing)
+(defmacro @ (class &optional thing)
     (concatenate 'string
-     (encode-js-identifier (symbol-name thing))
-     ":"
-     (encode-js-identifier (symbol-name other-thing))))
+     "."
+     (encode-js-identifier (symbol-name class))
+     (when  thing
+       (concatenate 'string ":"
+                    (encode-js-identifier (symbol-name thing))))))
+
+(defmacro % (class &optional thing)
+    (concatenate 'string
+     "#"
+     (encode-js-identifier (symbol-name class))
+     (when  thing
+       (concatenate 'string ":"
+                    (encode-js-identifier (symbol-name thing))))))
+
+(defun string-lowercase (s)
+  (map 'string #'char-downcase s))
+
+(defun expand-rules (rules)
+  (flet ((format-rule-values (values)
+           (with-output-to-string (s)
+               (dolist (value values)
+                 (if (stringp value)
+                     (format s "~S" value)
+                     (if (or (listp value) (boundp value))
+                         (format s "~A " (let ((value (eval value)))
+                                        (if (symbolp value)
+                                            (string-lowercase (symbol-name value))
+                                            value)))
+                         (format s "~A " (string-lowercase (symbol-name value)))))))))
+    
+    (with-output-to-string (s)
+      (dolist (rule rules)
+        (destructuring-bind (first &rest rest) rule
+          (format s "~A: ~A;~%"
+                  (if (boundp first)
+                      (string-lowercase (symbol-name (eval first)))
+                      (if (symbolp first)
+                          (string-lowercase (symbol-name first))
+                          first))
+                  (format-rule-values rest)))))))
      
-(defmacro css (&body body)
-  (dolist (rule body)
-    (destructuring-bind (selector &rest rules) rule
-      (if (symbolp selector)
-          (format t "~A { ~S }~%"
-                  (encode-js-identifier (symbol-name selector))
-                  rules)
-          (format t "~S { ~S }~%"
-                  selector
-                  rules)))))
-          
+(defmacro css (selector &body rules)
+  (if (stringp selector)
+      (format t "~A {~% ~A }~%" selector (expand-rules rules))
+      (if (listp selector)
+          (format t "~A {~% ~A }~%" (eval selector) (expand-rules rules))
+          (format t "~A {~% ~A }~%" (string-lowercase (symbol-name selector))
+                  (expand-rules rules)))
+          ))
+
+(defvar *vars* '())
+(defvar *funs* '())
 
 (defun autograph (f)
   (do ((form (read f nil) (read f nil)))
       ((not form))
-    (eval form)))
+    (format t "/* ~A */~%" form (car form))
+    (case (car form)
+      ((defvar defun)
+       (case (car form)
+         (defvar (push (second form) *vars*))
+         (defun (push (second form) *funs*)))
+       (eval form))
+      (t
+         (if (and (find (car form) *funs*) (symbol-function (car form)))
+             (eval `(css ,@(eval form)))
+             (eval `(css ,@form)))))))
 
 (defmacro while (test &body body)
   `(loop
