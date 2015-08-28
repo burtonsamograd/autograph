@@ -112,11 +112,9 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
       (dolist (rule rules)
         (destructuring-bind (first &rest rest) rule
           (format s "~A: ~A;~%"
-                  (if (boundp first)
-                      (string-lowercase (symbol-name (eval first)))
-                      (if (symbolp first)
-                          (string-lowercase (symbol-name first))
-                          first))
+                  (if (symbolp first)
+                      (string-lowercase (symbol-name first))
+                      first)
                   (format-rule-values rest)))))))
      
 (defmacro css (selector &body rules)
