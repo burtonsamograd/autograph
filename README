@@ -5,36 +5,9 @@ Autograph is a CSS generation language that uses s-expressions for
 styling rules and allows for the use of variables, functions and
 macros written in Common Lisp.
 
+See example.autograph for syntax.
+
 Obviously, this is work in progress.
-
-Example:
---------
-
-(defvar width 2em)
-
-(css
- (*
-  (:font-family monospace)
-  (:font-weight bold)
-  (:padding 0px)
-  (:margin 0px)
-  (:cursor pointer))
- 
- ("input[type=text]"
-  (:border 0px solid)
-  (:font-size inherit)
-  (:padding 0px)
-  (:margin 0px))
-
- (.*Two-character-hex-value-edit-view
-  `(:max-width ,width)
-  (:display inline-block))
-  
- (.*Edit-view
-  (:width 2em)
-  (:border solid 1px red))
- )
- 
 
 --
 BUrton Samograd <burton.samograd@gmail.com>
