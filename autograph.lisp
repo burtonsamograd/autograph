@@ -68,6 +68,20 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
           (format *error-output* "autograph: Cannot find load file: ~A~%" file))
       ))
 
+(defmacro ^ (&rest things)
+  (with-output-to-string (s)
+    (dolist (thing things)
+      (format s "~A " (if (symbolp thing)
+                          (string-lowercase (symbol-name thing))
+                          (eval thing))))))
+
+(defmacro & (&rest things)
+  (with-output-to-string (s)
+    (dolist (thing things)
+      (format s "~A, " (if (symbolp thing) ;; TOOD: not sure if trailing commas are a problem in CSS
+                          (string-lowercase (symbol-name thing))
+                          (eval thing))))))
+
 (defmacro @ (class &optional thing)
     (concatenate 'string
      "."

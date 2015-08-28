@@ -10,8 +10,6 @@
     (padding 0px)
     (margin 0px)
     (cursor pointer)))
-
-
 (*
  (font-family monospace)
  (font-weight bold)
@@ -44,6 +42,12 @@
 ((% *Some-id)
  (background-color red))
 
-(div
+((^ div input)
  (display inline-block))
  
+((^ (@ *Some-class) (% *Some-id)) ;; ^ === insert spaces between
+ (display inline-block))
+
+((& (@ *Some-class) (% *Some-id)) ;; & === insert commas between
+ (display inline-block))
+
