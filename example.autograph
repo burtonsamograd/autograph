@@ -35,11 +35,11 @@
  (max-width width)
  (display inline-block))
 
-((@ *Edit-view)
+((@ *Edit-view) ;; -> .EditView
  (width 2em)
  (border solid 1px (color)))
 
-((@ *Edit-view hover)
+((@ *Edit-view hover) ;; -> .EditView:hover
  (border solid 1px red))
 
 ((@ *Icon-x before)
