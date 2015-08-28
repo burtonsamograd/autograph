@@ -1,0 +1,32 @@
+Autograph
+---------
+
+Autograph is a CSS generation langauge that uses s-expressions for
+declaring styling rules.
+
+Example:
+(defvar width 2em)
+
+(css
+ (*
+  (:font-family monospace)
+  (:font-weight bold)
+  (:padding 0px)
+  (:margin 0px)
+  (:cursor pointer))
+ 
+ ("input[type=text]"
+  (:border 0px solid)
+  (:font-size inherit)
+  (:padding 0px)
+  (:margin 0px))
+
+ (.*Two-character-hex-value-edit-view
+  `(:max-width ,width)
+  (:display inline-block))
+  
+ (.*Edit-view
+  (:width 2em)
+  (:border solid 1px red))
+ )
+ 
