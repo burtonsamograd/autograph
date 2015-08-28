@@ -7,7 +7,10 @@ written in Common Lisp.
 
 See example.autograph for syntax.
 
-Obviously, this is work in progress.
+Usage:
+------
+
+        autograph style.autograph > style.css
 
 --
 Burton Samograd <burton.samograd@gmail.com>
