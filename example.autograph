@@ -1,0 +1,49 @@
+;; -*- mode: lisp -*-
+(defvar width '2em)
+
+(defun color () 'black)
+
+(defun edit (x)
+  `(input
+    (font-family monospace)
+    (font-weight ,x)
+    (padding 0px)
+    (margin 0px)
+    (cursor pointer)))
+
+
+(*
+ (font-family monospace)
+ (font-weight bold)
+ (padding 0px)
+ (margin 0px)
+ (cursor pointer))
+
+(edit 'bold)
+
+(input[type=text]
+ (border 0px solid)
+ (font-size inherit)
+ (padding 0px)
+ (margin 0px))
+
+((@ *Two-character-hex-value-edit-view)
+ (max-width width)
+ (display inline-block))
+
+((@ *Edit-view)
+ (width 2em)
+ (border solid 1px (color)))
+
+((@ *Edit-view hover)
+ (border solid 1px red))
+
+((@ *Icon-x before)
+ (content "+"))
+
+((% *Some-id)
+ (background-color red))
+
+(div
+ (display inline-block))
+ 
