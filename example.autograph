@@ -57,3 +57,6 @@
 ((@ *Tiny-Button before)
  (content "+"))
 
+
+("@viewport"
+ (width 65%))
