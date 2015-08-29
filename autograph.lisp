@@ -100,7 +100,7 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
            (with-output-to-string (s)
                (dolist (value values)
                  (if (stringp value)
-                     (format s "~S" value)
+                     (format s "~A" value)
                      (if (or (listp value) (boundp value))
                          (format s "~A " (let ((value (eval value)))
                                         (if (symbolp value)
