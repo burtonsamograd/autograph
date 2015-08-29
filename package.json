@@ -1,0 +1,27 @@
+{
+  "name": "autograph-cli",
+  "version": "1.0.0",
+  "description": " Autograph is a CSS generation language that uses s-expressions for styling rules and allows for the use of variables and functions written in Common Lisp.",
+  "main": "autograph",
+  "scripts": {
+    "install": "make",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/burtonsamograd/autograph.git"
+  },
+  "keywords": [
+    "css",
+    "language",
+    "compiler"
+  ],
+  "author": "Burton Samograd <burton.samograd@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/burtonsamograd/autograph/issues"
+  },
+  "homepage": "https://github.com/burtonsamograd/autograph",
+  "dependencies": {
+  }
+}
