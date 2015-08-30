@@ -4,6 +4,8 @@
 ;; for autograph features.
 
 (defvar width '2em)
+(defparameter height '100em)
+(defconstant something '100%) 
 
 ;; Functions act like macros and must return a symbol or a form
 (defun color () 'black)
@@ -31,32 +33,40 @@
  (padding 0px)
  (margin 0px))
 
-((@ *Two-character-hex-value-edit-view) ;; @ is for classes 
+((cls *Two-character-hex-value-edit-view) ;; cls is for classes
  (max-width width)
  (display inline-block))
 
-((@ *Edit-view) ;; -> .EditView
+((cls *Edit-view) ;; -> .EditView
  (width 2em)
  (border solid 1px (color)))
 
-((@ *Edit-view hover) ;; -> .EditView:hover
+((cls *Edit-view hover) ;; -> .EditView:hover
  (border solid 1px red))
 
-((% *Some-id) ;; % is for id's
+((id *Some-id) ;; id is for id's
  (background-color red))
 
-((^ div input)  ;; ^ === insert spaces between
+((inside div input)  ;; ^ === insert spaces between
  (display inline-block))
  
-((^ (@ *Some-class) (% *Some-id))
+((child (cls *Some-cls) (id *Some-id))
  (display inline-block))
 
-((& (@ *Some-class) (% *Some-id)) ;; & === insert commas between
+((after (cls *Some-cls) (id *Some-id))
  (display inline-block))
 
-((@ *Tiny-Button before)
+((before (cls *Some-cls) (id *Some-id))
+ (display inline-block))
+
+((all (cls *Some-cls)) ;; & === insert commas between
+ (display inline-block))
+
+((cls *Tiny-Button before)
  (content "+"))
 
+((cls *Some-div hover)
+ (box-shadow inset 0 0 5px "#000000")) 
 
 ("@viewport"
  (width 65%))
