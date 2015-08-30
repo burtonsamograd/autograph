@@ -65,21 +65,25 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
 (defun string-lowercase (s)
   (map 'string #'char-downcase s))
 
-(defmacro ^ (&rest things)
-  (with-output-to-string (s)
-    (dolist (thing things)
-      (format s "~A " (if (symbolp thing)
-                          (string-lowercase (symbol-name thing))
-                          (eval thing))))))
+(defmacro defselector-op (name sep)
+  `(defmacro ,name (&rest things)
+     (let ((s (with-output-to-string
+                (s)
+                (dolist (thing things)
+                  (format s "~A ~A "
+                          (if (symbolp thing)
+                              (string-lowercase (symbol-name thing))
+                            (eval thing))
+                          ,sep)))))
+       (subseq s 0 (- (length s) 2)))))
 
-(defmacro & (&rest things)
-  (with-output-to-string (s)
-    (dolist (thing things)
-      (format s "~A, " (if (symbolp thing) ;; TOOD: not sure if trailing commas are a problem in CSS
-                          (string-lowercase (symbol-name thing))
-                          (eval thing))))))
+(defselector-op all ",")
+(defselector-op inside " ")
+(defselector-op child ">")
+(defselector-op after "+")
+(defselector-op before "~")
 
-(defmacro @ (class &optional thing)
+(defmacro cls (class &optional thing)
     (concatenate 'string
      "."
      (encode-js-identifier (symbol-name class))
@@ -87,7 +91,7 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
        (concatenate 'string ":"
                     (encode-js-identifier (symbol-name thing))))))
 
-(defmacro % (class &optional thing)
+(defmacro id (class &optional thing)
     (concatenate 'string
      "#"
      (encode-js-identifier (symbol-name class))
