@@ -13,6 +13,12 @@ Usage:
 
         autograph style.ag > style.css
 
+Requires:
+---------
+
+SBCL, installable from http://sbcl.org/platform-table.html or 'apt-get
+install sbcl'.
+
 License:
 --------
 
