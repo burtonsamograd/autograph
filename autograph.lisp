@@ -103,7 +103,7 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
   (flet ((format-rule-values (values)
            (with-output-to-string (s)
                (dolist (value values)
-                 (if (stringp value)
+                 (if (or (stringp value) (numberp value))
                      (format s "~A" value)
                      (if (or (listp value) (boundp value))
                          (format s "~A " (let ((value (eval value)))
@@ -130,23 +130,20 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
                   (expand-rules rules)))
           ))
 
-(defvar *vars* '())
-(defvar *funs* '())
-
+(defparameter *funs* (list))
 (defun autograph (f)
   (do ((form (read f nil) (read f nil)))
       ((not form))
-    (format t "/* ~S */~%" form (car form))
-    (case (car form)
-      ((defvar defun)
-       (case (car form)
-         (defvar (push (second form) *vars*))
-         (defun (push (second form) *funs*)))
-       (eval form))
-      (t
-         (if (and (find (car form) *funs*) (symbol-function (car form)))
-             (eval `(css ,@(eval form)))
-             (eval `(css ,@form)))))))
+      (format t "/* ~S */~%" form)
+      (case (car form)
+            ((defun defvar defparameter defconstant)
+             (when (eq (car form) 'defun)
+               (push (second form) *funs*))
+             (eval form))
+            (t
+             (if (and (find (car form) *funs*) (symbol-function (car form)))
+                 (eval `(css ,@(eval form)))
+               (eval `(css ,@form)))))))
 
 (defmacro while (test &body body)
   `(loop
