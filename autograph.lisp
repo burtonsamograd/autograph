@@ -43,6 +43,12 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
                     ((every #'lower-case-p (remove-if-not #'alpha-char-p identifier)) (string-upcase identifier))
                     (t identifier))))))
 
+(defun string-lowercase (s)
+  (map 'string #'char-downcase s))
+
+(defun lowercase-symbol (s)
+  (string-lowercase (symbol-name s)))
+
 (defparameter *include-paths* ())
 
 (defmacro include (file)
@@ -63,9 +69,6 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
           (format *error-output* "autograph: Cannot find load file: ~A~%" file))
       ))
 
-(defun string-lowercase (s)
-  (map 'string #'char-downcase s))
-
 (defmacro defselector-op (name sep)
   `(defmacro ,name (&rest things)
      (let ((s (with-output-to-string
@@ -73,7 +76,7 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
                 (dolist (thing things)
                   (format s "~A ~A "
                           (if (symbolp thing)
-                              (string-lowercase (symbol-name thing))
+                              (lowercase-symbol thing)
                             (eval thing))
                           ,sep)))))
        (subseq s 0 (- (length s) 2)))))
@@ -109,27 +112,39 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
                      (if (or (listp value) (boundp value))
                          (format s "~A " (let ((value (eval value)))
                                         (if (symbolp value)
-                                            (string-lowercase (symbol-name value))
+                                            (lowercase-symbol value)
                                             value)))
-                         (format s "~A " (string-lowercase (symbol-name value)))))))))
+                         (format s "~A " (lowercase-symbol value))))))))
     
     (with-output-to-string (s)
       (dolist (rule rules)
         (destructuring-bind (first &rest rest) rule
-          (format s "~A: ~A;~%"
-                  (if (symbolp first)
-                      (string-lowercase (symbol-name first))
-                      first)
-                  (format-rule-values rest)))))))
+          (progn
+            (if (eq first '@viewport) ;; HACK
+                (format s "@viewport { ~A }"
+                        (expand-rules rest))
+              (format s "~A: ~A;~%"
+                      (if (symbolp first)
+                          (lowercase-symbol first)
+                        first)
+                      (format-rule-values rest)))))))))
      
 (defmacro css (selector &body rules)
   (if (stringp selector)
       (format t "~A {~% ~A }~%" selector (expand-rules rules))
       (if (listp selector)
           (format t "~A {~% ~A }~%" (eval selector) (expand-rules rules))
-          (format t "~A {~% ~A }~%" (string-lowercase (symbol-name selector))
+          (format t "~A {~% ~A }~%" (lowercase-symbol selector)
                   (expand-rules rules)))
-          ))
+      ))
+
+(defun quote-function-arguments (function-call)
+  (cons (car function-call)
+        (map 'list (lambda (e)
+                     (if (not (listp e))
+                         `',e
+                       e))
+             (cdr function-call))))
 
 (defparameter *funs* (list))
 (defun autograph (f)
@@ -137,13 +152,15 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
       ((not form))
       (format t "/* ~S */~%" form)
       (case (car form)
-            ((defun defvar defparameter defconstant)
+            ((defun)
              (when (eq (car form) 'defun)
                (push (second form) *funs*))
              (eval form))
+            ((defvar defparameter defconstant)
+             (eval form))
             (t
              (if (and (find (car form) *funs*) (symbol-function (car form)))
-                 (eval `(css ,@(eval form)))
+                 (eval `(css ,@(eval (quote-function-arguments form))))
                (eval `(css ,@form)))))))
 
 (defmacro while (test &body body)

@@ -7,8 +7,16 @@
 (defparameter height '100em)
 (defconstant something '100%) 
 
-;; Functions act like macros and must return a symbol or a form
-(defun color () 'black)
+;; Functions are written in Common Lisp and act like macros such that
+;; they must return a symbol or a form that is included in the source
+;; where they are called.
+(defun random-color ()
+  (let ((r (random 1.0)))
+    (cond
+     ((< r .25) 'red)
+     ((< r .5) 'green)
+     ((< r .75) 'blue)
+     (t 'black))))
 
 (defun edit (x)
   `(input
@@ -25,7 +33,7 @@
  (margin 0px)
  (cursor pointer))
 
-(edit 'bold)
+(edit bold)
 
 (input[type=text]
  (border 0px solid)
@@ -39,7 +47,7 @@
 
 ((cls *Edit-view) ;; -> .EditView
  (width 2em)
- (border solid 1px (color)))
+ (border solid 1px (random-color)))
 
 ((cls *Edit-view hover) ;; -> .EditView:hover
  (border solid 1px red))
@@ -71,12 +79,10 @@
 ((cls *Window)
  (border solid 1px red))
 
-("@viewport"
+(@viewport
  (width 65%))
 
-#| @media (max-width: 699px) and (min-width: 520px) {
-  @viewport {
-    width: 640px;
-  }
-} TODO |#
-
+;; Strings are passed 'as-is' for things that don't have syntax yet
+("@media (max-width: 699px) and (min-width: 520px)"
+ (@viewport
+  (width 640px)))
