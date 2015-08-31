@@ -3,21 +3,40 @@ Autograph
 
 Autograph is a CSS generation language that uses s-expressions for
 styling rules and allows for the use of variables and functions
-written in Common Lisp. This is meant to be used with sigil
-(https://www.npmjs.com/package/sigil-cli).
+written in Common Lisp.
 
-See example.ag for syntax.
+Autograph is written to be used with sigil, mostly because they have
+the same syntax for symbol naming and transformation for class names
+and ids:
+
+          https://www.npmjs.com/package/sigil-cli
+
+See example.ag for syntax and to see how symbol names are converted
+using the Parenscript syntax:
+
+    https://github.com/burtonsamograd/autograph/blob/master/example.ag
 
 Usage:
 ------
 
-        autograph style.ag > style.css
+        autograph -I [include path...] style.ag > style.css
+
+Includes;
+---------
+
+Autograph allows for the including of files as follows:
+
+          (include "common.ag")
+
+You can specify the include search paths with -I on the command line.
+
+
 
 Requires:
 ---------
 
 SBCL, installable from http://sbcl.org/platform-table.html or 'apt-get
-install sbcl'.
+install sbcl'.  After you have that, just run 'make'.
 
 License:
 --------

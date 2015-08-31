@@ -51,23 +51,18 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
 
 (defparameter *include-paths* ())
 
-(defmacro include (file)
+(defun include (file)
   ;;(format *error-output* "~A~%" *include-paths*)
-  (let (code)
-      (catch 'found
-        (dolist (include-path *include-paths*)
-          (let ((path (concatenate 'string (directory-namestring include-path) file)))
-            ;;(format *error-output* "Searching: ~A~%" path)
-            (when (probe-file path)
-              (with-open-file (f path)
-                ;;(format *error-output* "Found: ~A~%" path)
-                (do
-                 ((form (read f nil) (read f nil)))
-                 ((not form))
-                  (push form code)))
-              (throw 'found (cons 'progn (nreverse code))))))
-          (format *error-output* "autograph: Cannot find load file: ~A~%" file))
-      ))
+  (catch 'found
+    (dolist (include-path *include-paths*)
+      (let ((path (concatenate 'string (directory-namestring include-path) file)))
+        ;;(format *error-output* "Searching: ~A~%" path)
+        (when (probe-file path)
+          (with-open-file (f path)
+                          (autograph f)
+                          (throw 'found t)))))
+    (format *error-output* "autograph: Cannot find load file: ~A~%" file))
+  )
 
 (defmacro defselector-op (name sep)
   `(defmacro ,name (&rest things)
@@ -119,23 +114,25 @@ paren-script becomes parenScript, *some-global* becomes SOMEGLOBAL."
     (with-output-to-string (s)
       (dolist (rule rules)
         (destructuring-bind (first &rest rest) rule
-          (progn
-            (if (eq first '@viewport) ;; HACK
-                (format s "@viewport { ~A }"
-                        (expand-rules rest))
-              (format s "~A: ~A;~%"
-                      (if (symbolp first)
-                          (lowercase-symbol first)
-                        first)
-                      (format-rule-values rest)))))))))
+           (case first
+                 (@viewport (format s "@viewport { ~A }"
+                                    (expand-rules rest)))
+                 (t
+                  (format s "~A: ~A;~%"
+                          (if (symbolp first)
+                              (lowercase-symbol first)
+                            first)
+                          (format-rule-values rest)))))))))
      
 (defmacro css (selector &body rules)
   (if (stringp selector)
       (format t "~A {~% ~A }~%" selector (expand-rules rules))
       (if (listp selector)
           (format t "~A {~% ~A }~%" (eval selector) (expand-rules rules))
-          (format t "~A {~% ~A }~%" (lowercase-symbol selector)
-                  (expand-rules rules)))
+        (case selector
+              (include (apply #'include rules))
+              (t (format t "~A {~% ~A }~%" (lowercase-symbol selector)
+                         (expand-rules rules)))))
       ))
 
 (defun quote-function-arguments (function-call)

@@ -86,3 +86,5 @@
 ("@media (max-width: 699px) and (min-width: 520px)"
  (@viewport
   (width 640px)))
+
+(include "./example2.ag")
