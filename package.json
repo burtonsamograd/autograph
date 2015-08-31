@@ -1,6 +1,6 @@
 {
   "name": "autograph-cli",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": " Autograph is a CSS generation language that uses s-expressions for styling rules and allows for the use of variables and functions written in Common Lisp.",
   "main": "autograph",
   "scripts": {
